@@ -1,25 +1,41 @@
-<?php 
-
+<?php
 include "include/connection.php";
 include "include/classes.php";
  $id=$_GET['id'];
- $result=$x->readadminbyid($c,$id);
+ $result=$y->readcategorybyid($c,$id);
  $row=$result->fetch_assoc();
 
-    
+$category_img=$row['cat_img'];
 
-if (isset($_POST['submit']))
+if (isset($_POST['edit']))
 {
-	$email=$_POST['admin_email'];
-	$password=$_POST['admin_password'];
-	$name=$_POST['admin_name'];
-    #echo $email.$password.$name;
+   $name=$_POST['cat_name'];
+   $desc=$_POST['cat_desc'];
 
-	 $x->updateadmin($c,$email,$password,$name,$id);
-    if($result)
+   if ( ! $_FILES['cat_img']['name']) 
     {
-    header("location:index.php");
+       
+
+        $y->updatecategory($c,$name,$desc,$category_img,$id);
     }
+   else
+   { 
+     $category_img=$_FILES['cat_img']['name'];
+     $tmp_name=$_FILES['cat_img']['tmp_name'];
+     $path='upload/';
+     move_uploaded_file($tmp_name, $path.$category_img);
+    
+     $y-> updatecategory($c,$name,$desc,$category_img,$id);
+
+    
+   }
+  
+    
+    if($result)
+    { 
+    header("location:category.php");
+    }
+   
 
    
 }
@@ -74,32 +90,36 @@ include "include/header_admin.php";
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card">
-                                    <div class="card-header">Manage Admin</div>
+                                    <div class="card-header">Manage Category</div>
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center title-2">Edit Admin </h3>
+                                            <h3 class="text-center title-2">Add New Category </h3>
                                         </div>
                                         <hr>
-                                        <form action="" method="post">
+                                        <form action="" method="post" enctype="multipart/form-data" >
                                             <div class="form-group">
-                                                <label for="cc-payment" class="control-label mb-1">Email</label>
-                                                <input  name="admin_email" type="text" class="form-control"
-                                                        value="<?php echo $row['admin_email'];?>">
+                                                <label for="cc-payment" class="control-label mb-1">Name</label>
+                                                <input  name="cat_name" type="text" class="form-control"
+                                                        value="<?php echo $row['cat_name'];?>">
                                             </div>
                                             <div class="form-group has-success">
-                                                <label for="cc-name" class="control-label mb-1">Password</label>
-                                                <input name="admin_password" type="password" class="form-control cc-name valid" value="<?php echo $row['admin_password'];?>">
+                                                <label for="cc-name" class="control-label mb-1">Descrption</label>
+                                                <textarea  name="cat_desc" type="password" class="form-control cc-name valid"><?php echo $row['cat_desc'];?></textarea>
+                                               
                                             </div>
                                             <div class="form-group">
-                                                <label for="cc-number" class="control-label mb-1">Full Name</label>
-                                                <input  name="admin_name" type="text" class="form-control cc-number identified visa" value="<?php echo $row['admin_fullname'];?>">
+                                                <label for="cc-number" class="control-label mb-1">Category image: </label>
+                                                 <?php echo "<img src='upload/".$row['cat_img']."' width='100px;' height='100px;'>"; ?><br>
+                                                  <label for="cc-name" class="control-label mb-1">Change Image: </label><br>
+                                                <input  name="cat_img" type="file" class="form-control cc-number identified visa">
+                                                 
                                                 <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
                                             </div>
                                             <div>
-                                                <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block" name="submit">
+                                                <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block" name="edit">
                                                     <i class="fa fa-lock fa-lg"></i>&nbsp;
-                                                    <span id="payment-button-amount">Update</span>
-                                                    <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                                    <span id="payment-button-amount">Save</span>
+                                                
                                                 </button>
                                             </div>
                                         </form>

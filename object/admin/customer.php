@@ -1,29 +1,8 @@
 <?php 
 
-include "include/connection.php";
 include "include/classes.php";
- $id=$_GET['id'];
- $result=$x->readadminbyid($c,$id);
- $row=$result->fetch_assoc();
 
-    
-
-if (isset($_POST['submit']))
-{
-	$email=$_POST['admin_email'];
-	$password=$_POST['admin_password'];
-	$name=$_POST['admin_name'];
-    #echo $email.$password.$name;
-
-	 $x->updateadmin($c,$email,$password,$name,$id);
-    if($result)
-    {
-    header("location:index.php");
-    }
-
-   
-}
-include "include/header_admin.php";
+include "include/header_admin.php"; 
 ?>
 
 
@@ -74,32 +53,41 @@ include "include/header_admin.php";
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card">
-                                    <div class="card-header">Manage Admin</div>
+                                    <div class="card-header">Manage Customer</div>
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center title-2">Edit Admin </h3>
+                                            <h3 class="text-center title-2">Add New Customer </h3>
                                         </div>
                                         <hr>
                                         <form action="" method="post">
                                             <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1">Email</label>
-                                                <input  name="admin_email" type="text" class="form-control"
-                                                        value="<?php echo $row['admin_email'];?>">
+                                                <input  name="c_email" type="text" class="form-control">
                                             </div>
                                             <div class="form-group has-success">
                                                 <label for="cc-name" class="control-label mb-1">Password</label>
-                                                <input name="admin_password" type="password" class="form-control cc-name valid" value="<?php echo $row['admin_password'];?>">
+                                                <input name="c_password" type="password" class="form-control cc-name valid">
                                             </div>
                                             <div class="form-group">
                                                 <label for="cc-number" class="control-label mb-1">Full Name</label>
-                                                <input  name="admin_name" type="text" class="form-control cc-number identified visa" value="<?php echo $row['admin_fullname'];?>">
+                                                <input  name="c_name" type="text" class="form-control cc-number identified visa">
+                                                <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cc-number" class="control-label mb-1">Address</label>
+                                                <input  name="c_address" type="text" class="form-control cc-number identified visa">
+                                                <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cc-number" class="control-label mb-1">phone number</label>
+                                                <input  name="c_phone" type="text" class="form-control cc-number identified visa">
                                                 <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
                                             </div>
                                             <div>
-                                                <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block" name="submit">
+                                                <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block" name="submit1">
                                                     <i class="fa fa-lock fa-lg"></i>&nbsp;
-                                                    <span id="payment-button-amount">Update</span>
-                                                    <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                                    <span id="payment-button-amount">Save</span>
+                                                    
                                                 </button>
                                             </div>
                                         </form>
@@ -108,7 +96,54 @@ include "include/header_admin.php";
             </div>        
     </div>
 
-    
+    <div class="row m-t-30">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE-->
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-borderless table-data3">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                               
+                                                 <th>Address</th>
+                                                  <th>phone_num</th>
+                                                  <th>Edit</th>
+                                                  <th>Delete</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                           <?php
+
+                                           $result=$v->readcustom($c);
+                                    
+                                         while ($row=$result->fetch_assoc()) 
+                                            {
+                                               echo "<tr>"; 
+                                                echo "<td>{$row['custom_id']}</td>";
+                                               echo "<td>{$row['name']}</td>";
+                                               echo "<td>{$row['email']}</td>";
+                                              
+                                               echo "<td>{$row['Address']}</td>";
+                                               echo "<td>{$row['phone_num']}</td>";
+                                               echo "<td><a href='edit_custom.php?id={$row['custom_id']}' class='btn btn-primary'>Edit</a></td>";
+                                               echo "<td><a href='delete_custom.php?id={$row['custom_id']}' class='btn btn-danger'>Delete</a></td>";
+                                               echo "</tr>";
+                                            }
+                                           ?> 
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE-->
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
 <?php include "include/footer_admin.php";?>
 
     </div>

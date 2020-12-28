@@ -1,24 +1,24 @@
 <?php 
-
-include "include/connection.php";
 include "include/classes.php";
  $id=$_GET['id'];
- $result=$x->readadminbyid($c,$id);
- $row=$result->fetch_assoc();
+ $result=$v->readcustombyid($c,$id);
+ $row=mysqli_fetch_assoc($result);
 
     
 
 if (isset($_POST['submit']))
 {
-	$email=$_POST['admin_email'];
-	$password=$_POST['admin_password'];
-	$name=$_POST['admin_name'];
-    #echo $email.$password.$name;
+    $email=$_POST['c_email'];
+    $password=$_POST['c_password'];
+    $name=$_POST['c_name'];
+    $address=$_POST['c_address'];
+    $phone=$_POST['c_phone'];
 
-	 $x->updateadmin($c,$email,$password,$name,$id);
+     $v->updatecustom($c,$name,$email,$password,$address,$phone,$id);
+
     if($result)
     {
-    header("location:index.php");
+    header("location:customer.php");
     }
 
    
@@ -74,32 +74,42 @@ include "include/header_admin.php";
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card">
-                                    <div class="card-header">Manage Admin</div>
+                                    <div class="card-header">Manage Customer</div>
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center title-2">Edit Admin </h3>
+                                            <h3 class="text-center title-2">Add New Customer </h3>
                                         </div>
                                         <hr>
-                                        <form action="" method="post">
+                                        <form action="" method="post" novalidate="novalidate">
                                             <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1">Email</label>
-                                                <input  name="admin_email" type="text" class="form-control"
-                                                        value="<?php echo $row['admin_email'];?>">
+                                                <input  name="c_email" type="text" class="form-control"
+                                                        value="<?php echo $row['email'];?>">
                                             </div>
                                             <div class="form-group has-success">
                                                 <label for="cc-name" class="control-label mb-1">Password</label>
-                                                <input name="admin_password" type="password" class="form-control cc-name valid" value="<?php echo $row['admin_password'];?>">
+                                                <input name="c_password" type="password" class="form-control cc-name valid" value="<?php echo $row['password'];?>">
                                             </div>
                                             <div class="form-group">
                                                 <label for="cc-number" class="control-label mb-1">Full Name</label>
-                                                <input  name="admin_name" type="text" class="form-control cc-number identified visa" value="<?php echo $row['admin_fullname'];?>">
+                                                <input  name="c_name" type="text" class="form-control cc-number identified visa" value="<?php echo $row['name'];?>">
+                                                <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cc-number" class="control-label mb-1">Address</label>
+                                                <input  name="c_address" type="text" class="form-control cc-number identified visa" value="<?php echo $row['Address'];?>">  
+                                                <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cc-number" class="control-label mb-1">phone number</label>
+                                                <input  name="c_phone" type="text" class="form-control cc-number identified visa" value="<?php echo $row['phone_num'];?>">
                                                 <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
                                             </div>
                                             <div>
                                                 <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block" name="submit">
                                                     <i class="fa fa-lock fa-lg"></i>&nbsp;
-                                                    <span id="payment-button-amount">Update</span>
-                                                    <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                                    <span id="payment-button-amount">Save</span>
+                                                    
                                                 </button>
                                             </div>
                                         </form>

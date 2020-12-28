@@ -1,28 +1,46 @@
 <?php 
-
-include "include/connection.php";
 include "include/classes.php";
+include "include/connection.php";
  $id=$_GET['id'];
- $result=$x->readadminbyid($c,$id);
- $row=$result->fetch_assoc();
+$result=$z->readproductbyid($c,$id);
+$row=mysqli_fetch_assoc($result);
 
-    
+$product_img=$row['pro_image'];
 
 if (isset($_POST['submit']))
-{
-	$email=$_POST['admin_email'];
-	$password=$_POST['admin_password'];
-	$name=$_POST['admin_name'];
-    #echo $email.$password.$name;
+{   
+    $name=$_POST['p_name'];
+    $desc=$_POST['p_desc'];
+    $price=$_POST['p_price'];
+    $category=$_POST['select'];
 
-	 $x->updateadmin($c,$email,$password,$name,$id);
-    if($result)
+    if ( ! $_FILES['p_img']['name']) 
     {
-    header("location:index.php");
+ 
+     $z->updateproduct($c,$name,$desc,$price,$category,$product_img,$id); 
+    }
+    else
+    {
+        
+    $product_img=$_FILES['p_img']['name'];
+    $tmp_name=$_FILES['p_img']['tmp_name'];
+    $path='upload/';
+    move_uploaded_file($tmp_name, $path.$product_img);
+
+      $z->updateproduct($c,$name,$desc,$price,$category,$product_img,$id); 
+ 
+    }
+ if($result)
+    {
+    header("location:product.php");
     }
 
-   
+
+ 
+  
 }
+   
+
 include "include/header_admin.php";
 ?>
 
@@ -74,31 +92,61 @@ include "include/header_admin.php";
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card">
-                                    <div class="card-header">Manage Admin</div>
+                                    <div class="card-header">Manage Product</div>
                                     <div class="card-body">
                                         <div class="card-title">
-                                            <h3 class="text-center title-2">Edit Admin </h3>
+                                            <h3 class="text-center title-2">Add New Product </h3>
                                         </div>
                                         <hr>
-                                        <form action="" method="post">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                             <div class="form-group">
-                                                <label for="cc-payment" class="control-label mb-1">Email</label>
-                                                <input  name="admin_email" type="text" class="form-control"
-                                                        value="<?php echo $row['admin_email'];?>">
+                                                <label for="cc-payment" class="control-label mb-1">product name</label>
+                                                <input  name="p_name" type="text" class="form-control"
+                                                        value="<?php echo $row['pro_name'];?>">
                                             </div>
                                             <div class="form-group has-success">
-                                                <label for="cc-name" class="control-label mb-1">Password</label>
-                                                <input name="admin_password" type="password" class="form-control cc-name valid" value="<?php echo $row['admin_password'];?>">
+                                                <label for="cc-name" class="control-label mb-1">Descrption</label>
+                                                <textarea  name="p_desc" type="password" class="form-control cc-name valid"><?php echo $row['pro_desc'];?></textarea>
+                                               
                                             </div>
                                             <div class="form-group">
-                                                <label for="cc-number" class="control-label mb-1">Full Name</label>
-                                                <input  name="admin_name" type="text" class="form-control cc-number identified visa" value="<?php echo $row['admin_fullname'];?>">
+                                                <label for="cc-number" class="control-label mb-1">product image</label>
+                                                 <?php echo "<img src='upload/".$row['pro_image']."' width='100px;' height='100px;'>"; ?><br><br>
+                                                  <label for="cc-name" class="control-label mb-1">Change Image: </label><br>
+                                                <input  name="p_img" type="file" class="form-control cc-number identified visa">
                                                 <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group has-success">
+                                                <label for="cc-name" class="control-label mb-1">price</label>
+                                                <input name="p_price" type="number" class="form-control cc-name valid"  value="<?php echo $row['pro_price'];?>">
+                                            </div>
+                                            <div class="row form-group">
+                                                
+                                                <div class="col-12 col-md-12">
+                                                    <select name="select" id="select" class="form-control">
+                                                        <option></option>
+                                                        <?php
+                                                       $result=$y->readcategory($c);
+                                                       while ($row1=$result->fetch_assoc()) 
+                                                       {
+                                                            echo "<option value={$row1['cat_id']}";
+                                                            if ($row['cat_id']==$row1['cat_id']) 
+                                                            {
+                                                               echo " selected";
+                                                            }
+                                                            echo ">";
+                                                            echo $row1['cat_name'];
+                                                            echo "</option>";
+                                                        }
+                                                        ?>
+                                                        
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div>
                                                 <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block" name="submit">
                                                     <i class="fa fa-lock fa-lg"></i>&nbsp;
-                                                    <span id="payment-button-amount">Update</span>
+                                                    <span id="payment-button-amount">Save</span>
                                                     <span id="payment-button-sending" style="display:none;">Sending…</span>
                                                 </button>
                                             </div>
@@ -108,7 +156,7 @@ include "include/header_admin.php";
             </div>        
     </div>
 
-    
+   
 <?php include "include/footer_admin.php";?>
 
     </div>
